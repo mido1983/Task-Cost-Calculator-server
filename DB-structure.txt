@@ -1,0 +1,171 @@
+1. Коллекция users (Пользователи)
+Описание: Хранит информацию о пользователях.
+
+Поля:
+
+_id: ObjectId
+name: String (Имя пользователя)
+email: String (Электронная почта, уникальная)
+passwordHash: String (Хэш пароля)
+role: String (Роль: администратор, бухгалтер, фрилансер)
+freelancerMode: Boolean (Флаг, работает ли пользователь как фрилансер)
+companyId: ObjectId (Ссылка на компанию, если применимо)
+subscriptionId: ObjectId (Ссылка на коллекцию subscriptions)
+settings: Object (Пользовательские настройки)
+trialEndDate: Date (Дата окончания пробного периода, по умолчанию +45 дней с момента регистрации)
+permissions: Array of Strings (Список разрешений для управления доступом)
+2. Коллекция subscriptions (Подписки)
+Описание: Информация о подписках пользователей.
+
+Поля:
+
+_id: ObjectId
+userId: ObjectId (Ссылка на пользователя)
+accountType: String (Тип аккаунта: paid-5, paid-10, paid-15)
+features: Array of Strings (Список доступных функций, например, ["invoices", "reports", "multi-company"])
+addOns: Array of Strings (Дополнительные платные функции)
+startDate: Date (Дата начала подписки)
+endDate: Date (Дата окончания подписки)
+isActive: Boolean (Флаг активности подписки)
+paymentHistory: Array of Objects (История платежей)
+date: Date (Дата платежа)
+amount: Number (Сумма платежа)
+transactionId: String (Идентификатор платежа)
+3. Коллекция features (Функциональность)
+Описание: Определяет доступные функции и их привязку к типам аккаунтов.
+
+Поля:
+
+_id: ObjectId
+featureName: String (Название функции, например, invoices)
+description: String (Описание функциональности)
+availableFor: Array of Strings (Список типов аккаунтов, например, ["paid-5", "paid-10", "paid-15"])
+4. Коллекция companies (Компании)
+Описание: Информация о компаниях.
+
+Поля:
+
+_id: ObjectId
+name: String (Название компании)
+address: String (Адрес)
+taxId: String (ИНН/КПП)
+settings: Object (Настройки компании)
+users: Array of ObjectIds (Ссылки на пользователей компании)
+5. Коллекция freelance_clients (Клиенты фрилансера)
+Описание: Клиенты фрилансеров.
+
+Поля:
+
+_id: ObjectId
+freelancerId: ObjectId (Ссылка на пользователя-фрилансера)
+name: String (Имя клиента)
+email: String (Электронная почта клиента)
+phone: String (Телефон клиента)
+address: String (Адрес клиента)
+companyName: String (Название компании клиента, если применимо)
+taxId: String (ИНН клиента)
+6. Коллекция freelance_invoices (Счета на оплату для фрилансеров)
+Описание: Счета, выставленные фрилансерами.
+
+Поля:
+
+_id: ObjectId
+freelancerId: ObjectId (Ссылка на пользователя-фрилансера)
+clientId: ObjectId (Ссылка на клиента из freelance_clients)
+invoiceNumber: String (Номер счета)
+dateIssued: Date (Дата выставления)
+dueDate: Date (Срок оплаты)
+items: Array of Objects
+description: String (Описание услуги/товара)
+quantity: Number (Количество)
+unitPrice: Number (Цена за единицу)
+total: Number (Итоговая сумма за позицию)
+totalAmount: Number (Общая сумма счета)
+status: String (Статус: неоплачен, частично оплачен, оплачен)
+paymentIds: Array of ObjectIds (Ссылки на связанные платежи)
+7. Коллекция payments (Платежи)
+Описание: Оплаты от клиентов.
+
+Поля:
+
+_id: ObjectId
+userId: ObjectId (Ссылка на пользователя или фрилансера)
+invoiceId: ObjectId (Ссылка на счет из freelance_invoices)
+subscriptionId: ObjectId (Ссылка на подписку, если платеж за подписку)
+date: Date (Дата платежа)
+amount: Number (Сумма платежа)
+paymentMethod: String (Метод оплаты: кредитная карта, PayPal и т.д.)
+transactionId: String (Идентификатор транзакции)
+8. Коллекция receipts (Чеки)
+Описание: Чеки, выданные клиентам после оплаты.
+
+Поля:
+
+_id: ObjectId
+freelancerId: ObjectId (Ссылка на пользователя-фрилансера)
+clientId: ObjectId (Ссылка на клиента)
+paymentId: ObjectId (Ссылка на платеж из payments)
+receiptNumber: String (Номер чека)
+dateIssued: Date (Дата выдачи)
+amount: Number (Сумма чека)
+9. Коллекция accounts (Счета)
+Описание: План счетов для каждой компании.
+
+Поля:
+
+_id: ObjectId
+accountNumber: String (Номер счета)
+name: String (Название счета)
+type: String (Тип счета: актив, пассив, доход, расход)
+parentAccountId: ObjectId (Ссылка на родительский счет)
+companyId: ObjectId (Ссылка на компанию)
+balance: Number (Текущий баланс)
+10. Коллекция transactions (Транзакции)
+Описание: Финансовые транзакции (проводки).
+
+Поля:
+
+_id: ObjectId
+date: Date (Дата транзакции)
+description: String (Описание)
+entries: Array of Objects
+accountId: ObjectId (Ссылка на счет)
+debit: Number (Сумма дебета)
+credit: Number (Сумма кредита)
+companyId: ObjectId (Ссылка на компанию)
+attachments: Array of Strings (Ссылки на файлы)
+createdBy: ObjectId (Ссылка на пользователя)
+11. Коллекция reports (Отчеты)
+Описание: Сгенерированные отчеты.
+
+Поля:
+
+_id: ObjectId
+reportType: String (Тип отчета: баланс, отчет о прибылях и убытках и т.д.)
+dateGenerated: Date (Дата генерации)
+data: Object (Данные отчета)
+companyId: ObjectId (Ссылка на компанию)
+12. Коллекция auditLogs (Логи действий)
+Описание: История действий пользователей.
+
+Поля:
+
+_id: ObjectId
+userId: ObjectId (Ссылка на пользователя)
+action: String (Тип действия: создание, обновление, удаление)
+entity: String (Тип сущности: клиент, счет, платеж и т.д.)
+entityId: ObjectId (Ссылка на сущность)
+timestamp: Date (Время действия)
+ipAddress: String (IP-адрес пользователя)
+details: Object (Дополнительная информация)
+13. Коллекция notifications (Уведомления)
+Описание: Система уведомлений и напоминаний для пользователей.
+
+Поля:
+
+_id: ObjectId
+userId: ObjectId (Ссылка на пользователя)
+type: String (Тип уведомления, например, reminder/payment_due)
+message: String (Сообщение уведомления)
+read: Boolean (Флаг, прочитано или нет)
+createdAt: Date (Дата создания уведомления)
